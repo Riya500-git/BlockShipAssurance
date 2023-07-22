@@ -1,5 +1,7 @@
-import React from 'react';
-import { Box, ChakraProvider } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { Box, ChakraProvider, Button } from '@chakra-ui/react';
+import { FaStar } from 'react-icons/fa';
+
 
 const List = ({ connectedAddress, myType, myParcels }) => {
   const getStatusString = (status_) => {
@@ -9,6 +11,13 @@ const List = ({ connectedAddress, myType, myParcels }) => {
     return "Failed";
   };
   const parcels = myParcels;
+
+    const [selectedRating, setSelectedRating] = useState(0);
+
+    const handleRatingChange = (rating) => {
+      setSelectedRating(rating);
+    };
+  
 
   return (
     <ChakraProvider>
@@ -44,6 +53,23 @@ const List = ({ connectedAddress, myType, myParcels }) => {
             Expected Delivery Date:{/* {new Date(parcel.expectedDelivery.toString() * 1000).toLocaleString()}*/}
           </p>
           <p margin="8px 0">OTP: {/*{parcel.otp.toString()}*/}</p>
+
+          <Box display="flex" alignItems="center" marginTop="16px">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <FaStar
+                  key={star}
+                  color={star <= selectedRating ? "yellow" : "gray"}
+                  size={24}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => handleRatingChange(star)}
+                />
+              ))}
+            </Box>
+
+            <Button colorScheme="teal" marginTop="16px">
+              Submit Rating
+            </Button>
+
         </Box>
       {/* ) */}
       {/* ) */}
