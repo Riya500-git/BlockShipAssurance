@@ -20,6 +20,11 @@ module.exports = {
     hardhat: {
       blockGasLimit: 100000000
     }
+    ,
+    matic: {
+      url: "https://rpc-mumbai.maticvigil.com",
+      accounts: [process.env.PRIVATE_KEY]
+    }
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
