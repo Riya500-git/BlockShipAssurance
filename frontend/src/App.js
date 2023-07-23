@@ -24,6 +24,7 @@ function App() {
   const [web3, setWeb3] = useState(null);
   const [camoParcelInstance, setCamoParcelInstance] = useState(null);
 
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     connectWallet();
@@ -161,7 +162,7 @@ function App() {
 
   const getMyType = async () => {
     try {
-      let result = await camoParcelInstance.methods.getMyType().call();
+      let result = await camoParcelInstance.methods.getMyType().call({ from: window.web3.currentProvider.selectedAddress });
       result = result.toString();
       let type = UserType.NONE;
       if (result === "1") {
@@ -178,6 +179,43 @@ function App() {
     }
   };
 
+  const rateDeliveredParcel = async (pId, stars) => {
+    try {
+      let result = await camoParcelInstance.methods.rateDeliveredParcel(pId, stars).send({ from: window.web3.currentProvider.selectedAddress });
+      console.info("result: ", result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const viewMYParcels = async () => {
+    try {
+      let result = await camoParcelInstance.methods.viewMYParcels().call({ from: window.web3.currentProvider.selectedAddress });
+      console.info("result: ", result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const getMyId = async () => {
+    try {
+      let result = await camoParcelInstance.methods.getMyId().call({ from: window.web3.currentProvider.selectedAddress });
+      console.info("result: ", result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const getShipperById = async (pId) => {
+    try {
+      let result = await camoParcelInstance.methods.getShipperById(pId).call({ from: window.web3.currentProvider.selectedAddress });
+      console.info("result: ", result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // Shipper Functions
   const registerAsShipper = async () => {
     try {
       await updateFlowPermissions(addrParcel, "1000000000000000", "7");
@@ -191,6 +229,107 @@ function App() {
   const unregisterAsShipper = async () => {
     try {
       let result = await camoParcelInstance.methods.unregisterAsShipper().send({ from: window.web3.currentProvider.selectedAddress });
+      console.info("result: ", result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const addPartner = async (partner_address, salary) => {
+    try {
+      let result = await camoParcelInstance.methods.addPartner(partner_address, salary).send({ from: window.web3.currentProvider.selectedAddress });
+      console.info("result: ", result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const removePartner = async (partner_Id) => {
+    try {
+      let result = await camoParcelInstance.methods.removePartner(partner_Id).send({ from: window.web3.currentProvider.selectedAddress });
+      console.info("result: ", result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const shipOrer = async (itemName, itemDesc, userAddress, expectedDelivery, baseCompensation, otp) => {
+    try {
+      let result = await camoParcelInstance.methods.shipOrder(itemName, itemDesc, userAddress, expectedDelivery, baseCompensation, otp).send({ from: window.web3.currentProvider.selectedAddress });
+      console.info("result: ", result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const viewParcel = async (pId) => {
+    try {
+      let result = await camoParcelInstance.methods.viewParcel(pId).call({ from: window.web3.currentProvider.selectedAddress });
+      console.info("result: ", result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const viewMyShippedParcels = async () => {
+    try {
+      let result = await camoParcelInstance.methods.viewMyShippedParcels().call({ from: window.web3.currentProvider.selectedAddress });
+      console.info("result: ", result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const viewMyPartners = async () => {
+    try {
+      let result = await camoParcelInstance.methods.viewMyPartners().call({ from: window.web3.currentProvider.selectedAddress });
+      console.info("result: ", result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const shipperDepositFund = async (amount) => {
+    try {
+      let result = await camoParcelInstance.methods.shipperDepositFund(amount).send({ from: window.web3.currentProvider.selectedAddress });
+      console.info("result: ", result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // Partner functions
+  const updateLocation = async (pId, location) => {
+    try {
+      let result = await camoParcelInstance.methods.updateLocation(pId, location).send({ from: window.web3.currentProvider.selectedAddress });
+      console.info("result: ", result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const markParcelDelivered = async (pId, otp) => {
+    try {
+      let result = await camoParcelInstance.methods.markParcelDelivered(pId, otp).send({ from: window.web3.currentProvider.selectedAddress });
+      console.info("result: ", result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // Owner functions
+  const banShipper = async (id) => {
+    try {
+      let result = await camoParcelInstance.methods.banShipper(id).send({ from: window.web3.currentProvider.selectedAddress });
+      console.info("result: ", result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const withdrawFundsCollected = async (amount) => {
+    try {
+      let result = await camoParcelInstance.methods.withdrawFundsCollected(amount).send({ from: window.web3.currentProvider.selectedAddress });
       console.info("result: ", result);
     } catch (error) {
       console.error(error);
