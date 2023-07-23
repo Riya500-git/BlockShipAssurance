@@ -4,7 +4,7 @@ import { UserType } from "./utils";
 
 // import { addrParcel, CHAIN_PARAMS, DEFAULT_USER_TYPE, TYPE_SHIPPER, TYPE_PARTNER, TYPE_OWNER } from './utils';
 
-const Create = ({ connectedAddress, myType, registerAsShipper, unregisterAsShipper }) => {
+const Create = ({ connectedAddress, myType, registerAsShipper, unregisterAsShipper, shipOrder }) => {
   const [itemName, setItemName] = useState('');
   const [itemDesc, setItemDesc] = useState('');
   const [userAddress, setUserAddress] = useState('');
@@ -41,7 +41,7 @@ const Create = ({ connectedAddress, myType, registerAsShipper, unregisterAsShipp
 
     const otp = generateOTP();
 
-    // shipOrder(itemName, itemDesc, userAddress, timestamp, baseCompensation, otp);
+    shipOrder(itemName, itemDesc, userAddress, timestamp, baseCompensation, otp);
   }
 
   const register = () => {

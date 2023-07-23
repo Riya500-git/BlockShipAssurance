@@ -50,7 +50,6 @@ function App() {
 
   const connectWallet = async () => {
     console.log("connectWallet() called")
-
     try {
       await window.ethereum.request({
         method: 'wallet_addEthereumChain',
@@ -71,7 +70,6 @@ function App() {
       }
     } catch (error) {
       console.error(error);
-      alert('Failed to connect Metamask. Please try again.');
     }
   };
 
@@ -96,11 +94,67 @@ function App() {
       const camoParcelInstance = new web3Instance.eth.Contract(camoParcelAbi, addrParcel);
       console.info("camoParcelInstance:- ", camoParcelInstance);
       setCamoParcelInstance(camoParcelInstance)
+      await attachListeners();
     } catch (error) {
       console.error(error);
     }
   }
 
+  const attachListeners = async () => {
+    console.log("attachListeners() called")
+    if (!camoParcelInstance) return;
+    camoParcelInstance.events.ParcelShippedEvent({}, (error, event) => {
+      if (error) {
+        console.error(error);
+        return;
+      }
+      if (!shouldProcessEvent(event.id)) return;
+      console.log(event);
+
+      const sender = event.returnValues[0];
+      const receiver = event.returnValues[1];
+      const parcelId = event.returnValues[2].toString();
+      console.log(sender, receiver, parcelId);
+      // TODO make toast for sender and receiver
+    })
+
+    camoParcelInstance.events.ParcelLocationUpdated({}, (error, event) => {
+      if (error) {
+        console.error(error);
+        return;
+      }
+      if (!shouldProcessEvent(event.id)) return;
+      console.log(event);
+
+      const partner = event.returnValues[0];
+      const receiver = event.returnValues[1];
+      const parcelId = event.returnValues[2].toString();
+
+      console.log(partner, receiver, parcelId);
+      // TODO make toast for partner and receiver
+    })
+
+    camoParcelInstance.events.ParcelDelivered({}, (error, event) => {
+      if (error) {
+        console.error(error);
+        return;
+      }
+      if (!shouldProcessEvent(event.id)) return;
+      console.log(event);
+      const partner = event.returnValues[0];
+      const receiver = event.returnValues[1];
+      const parcelId = event.returnValues[2].toString();
+      console.log(partner, receiver, parcelId);
+      // TODO make toast for partner and receiver
+    })
+  }
+  const processedEvents = new Set();
+  const shouldProcessEvent = (evenId) => {
+    if (processedEvents.has(evenId)) return false;
+    if (processedEvents.size >= 10000) processedEvents.clear()
+    processedEvents.add(evenId);
+    return true;
+  }
 
   async function updateFlowPermissions(
     operator,
@@ -154,8 +208,6 @@ function App() {
       console.error(error);
     }
   }
-
-
 
   // User functions
   const [userType, setUserType] = useState();
@@ -239,6 +291,7 @@ function App() {
     try {
       let result = await camoParcelInstance.methods.addPartner(partner_address, salary).send({ from: window.web3.currentProvider.selectedAddress });
       console.info("result: ", result);
+      // TODO show toast that partner has been added
     } catch (error) {
       console.error(error);
     }
@@ -248,6 +301,7 @@ function App() {
     try {
       let result = await camoParcelInstance.methods.removePartner(partner_Id).send({ from: window.web3.currentProvider.selectedAddress });
       console.info("result: ", result);
+      // Show toast partner has been removed
     } catch (error) {
       console.error(error);
     }
@@ -293,6 +347,7 @@ function App() {
     try {
       let result = await camoParcelInstance.methods.shipperDepositFund(amount).send({ from: window.web3.currentProvider.selectedAddress });
       console.info("result: ", result);
+      // TODO show toast fund has been deposited
     } catch (error) {
       console.error(error);
     }
@@ -345,7 +400,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
 
-        <Route path="/shipper" element={<Create myType={userType} registerAsShipper={registerAsShipper} unregisterAsShipper={unregisterAsShipper} />} />
+        <Route path="/shipper" element={<Create myType={userType} registerAsShipper={registerAsShipper} unregisterAsShipper={unregisterAsShipper} shipOrder={shipOrer} />} />
 
         <Route path="/partner" element={<Scan />} />
 
