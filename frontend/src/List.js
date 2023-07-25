@@ -10,7 +10,9 @@ const List = ({ connectedAddress, myType, myParcels }) => {
     else if (status_ === "2") return "Delivered";
     return "Failed";
   };
-  const parcels = myParcels;
+  // const parcels = myParcels;
+  const parcels = Array.isArray(myParcels) ? myParcels : [];
+
 
     const [selectedRating, setSelectedRating] = useState(0);
 
@@ -31,9 +33,9 @@ const List = ({ connectedAddress, myType, myParcels }) => {
       height="100vh"
       marginTop="0"
     >
-      {/* {parcels.map((parcel) => ( */}
+      {parcels.map((parcel) => (
         <Box
-          // key={parcel.id.toString()}
+          key={parcel.id.toString()}
           width="100%"
           height="auto"
           padding="20px"
@@ -43,16 +45,16 @@ const List = ({ connectedAddress, myType, myParcels }) => {
           flexDirection="column"
         >
           <h2 fontSize="20px" marginBottom="10px">
-            ID: {/* {parcel.id.toString()} */}
+            ID: {parcel.id.toString()}
           </h2>
-           <p margin="8px 0">Name: {/* {parcel.itemName}*/}</p> 
-          <p margin="8px 0">Description: {/*{parcel.itemDesc}*/}</p>
-          <p margin="8px 0">Current Location:{/* {parcel.currentLocation}*/}</p>
-          <p margin="8px 0">Status:{/* {getStatusString(parcel.status.toString())}*/}</p>
+           <p margin="8px 0">Name: {parcel.itemName}</p> 
+          <p margin="8px 0">Description: {parcel.itemDesc}</p>
+          <p margin="8px 0">Current Location:{parcel.currentLocation}</p>
+          <p margin="8px 0">Status:{getStatusString(parcel.status.toString())}</p>
           <p margin="8px 0">
-            Expected Delivery Date:{/* {new Date(parcel.expectedDelivery.toString() * 1000).toLocaleString()}*/}
+            Expected Delivery Date:{new Date(parcel.expectedDelivery.toString() * 1000).toLocaleString()}
           </p>
-          <p margin="8px 0">OTP: {/*{parcel.otp.toString()}*/}</p>
+          <p margin="8px 0">OTP: {parcel.otp.toString()}</p>
 
           <Box display="flex" alignItems="center" marginTop="16px">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -71,9 +73,9 @@ const List = ({ connectedAddress, myType, myParcels }) => {
             </Button>
 
         </Box>
-      {/* ) */}
-      {/* ) */}
-      {/* } */}
+       ) 
+       )
+       }
     </Box>
     </ChakraProvider>
   );
