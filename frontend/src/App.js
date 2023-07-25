@@ -7,6 +7,7 @@ import Create from './Create';
 import Navbar from './components/Navbar';
 import Home from './Home';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Shipper from './Shipper';
 
 
 import Web3 from 'web3';
@@ -307,7 +308,7 @@ function App() {
     }
   }
 
-  const shipOrer = async (itemName, itemDesc, userAddress, expectedDelivery, baseCompensation, otp) => {
+  const shipOrder = async (itemName, itemDesc, userAddress, expectedDelivery, baseCompensation, otp) => {
     try {
       let result = await camoParcelInstance.methods.shipOrder(itemName, itemDesc, userAddress, expectedDelivery, baseCompensation, otp).send({ from: window.web3.currentProvider.selectedAddress });
       console.info("result: ", result);
@@ -391,22 +392,21 @@ function App() {
     }
   }
 
-
-
-
   return (
+    // <Shipper/>
+
     <Router>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
 
-        <Route path="/shipper" element={<Create myType={userType} registerAsShipper={registerAsShipper} unregisterAsShipper={unregisterAsShipper} shipOrder={shipOrer} />} />
+        <Route path="/shipper" element={<Create myType={userType} registerAsShipper={registerAsShipper} unregisterAsShipper={unregisterAsShipper} shipOrder={shipOrder} />} />
 
-        <Route path="/partner" element={<Scan />} />
+        <Route path="/partner" element={<Scan myType={userType} markParcelDelivered={markParcelDelivered} updateLocation={updateLocation} />} />
 
-        <Route path="/myparcels" element={<List />} />
+        <Route path="/myparcels" element={<List connectedAddress={walletAddress} myType={userType} myParcels={viewMYParcels} />} />
 
-        <Route path="/owner" element={<Owner />} />
+        <Route path="/owner" element={<Owner walletAddress={walletAddress} myType={userType} addShipper={addShipper} addPartner={addPartner} removeAssociate={removePartner} fundContract={shipperDepositFund} withdrawFunds={withdrawFundsCollected} />} />
       </Routes>
     </Router>
   );
