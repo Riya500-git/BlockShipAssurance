@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Box, Button, Input, ChakraProvider } from '@chakra-ui/react';
-// import Html5QrcodePlugin from './Html5QrcodePlugin.jsx';
+import Html5QrcodePlugin from './Html5QrcodePlugin.jsx';
 
 const Scan = ({ connectedAddress, myType, markParcelDelivered, updateLocation }) => {
   const [parcelId, setParcelId] = useState('');
@@ -26,8 +26,8 @@ const Scan = ({ connectedAddress, myType, markParcelDelivered, updateLocation })
   const onNewScanResult = (decodedText, decodedResult) => {
     console.log("App [result]", decodedResult);
     const info = decodedText.split(' ');
-    // const element = document.getElementById('parcelId');
-    // element.textContent = info[2];
+    const element = document.getElementById('parcelId');
+    element.textContent = info[2];
     setParcelId(info[2]);
     // setDecodedResults(prev => [...prev, decodedResult]);
   };
@@ -35,7 +35,7 @@ const Scan = ({ connectedAddress, myType, markParcelDelivered, updateLocation })
   return (
     <ChakraProvider>
     <Box className="parcel-containers" backgroundColor="rgba(25, 255, 255, 0.5)" display="flex" flexDirection="column" alignItems="center" justifyContent="center" height="100vh" marginTop="0">
-      {/* <Html5QrcodePlugin fps={10} qrbox={250} disableFlip={false} qrCodeSuccessCallback={onNewScanResult} /> */}
+      <Html5QrcodePlugin fps={10} qrbox={250} disableFlip={false} qrCodeSuccessCallback={onNewScanResult} />
 
       <Box className="parcel-id-box" marginTop="20px" padding="0px" backgroundColor="#ffffff" border="0px solid #dddddd" borderRadius="8px" marginBottom="50px" width="400px" >
         <Input
