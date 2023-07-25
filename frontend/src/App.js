@@ -11,9 +11,6 @@ import Shipper from './Shipper';
 
 
 import Web3 from 'web3';
-import { ethers } from "ethers";
-
-import { Framework } from "@superfluid-finance/sdk-core";
 
 import { addrParcel, CHAIN_PARAMS, UserType } from './utils';
 
@@ -26,7 +23,6 @@ function App() {
   const [camoParcelInstance, setCamoParcelInstance] = useState(null);
 
   const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     connectWallet();
   }, []);
@@ -157,58 +153,6 @@ function App() {
     return true;
   }
 
-  async function updateFlowPermissions(
-    operator,
-    flowRateAllowance,
-    permissionType
-  ) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-
-    const signer = provider.getSigner();
-
-    const chainId = await window.ethereum.request({ method: "eth_chainId" });
-    const sf = await Framework.create({
-      chainId: Number(chainId),
-      provider: provider
-    });
-
-    const superSigner = sf.createSigner({ signer: signer });
-
-    console.log(signer);
-    console.log(await superSigner.getAddress());
-    const daix = await sf.loadSuperToken("MATICx");
-
-    console.log(daix);
-
-    try {
-      const updateFlowOperatorOperation = daix.updateFlowOperatorPermissions({
-        flowOperator: operator,
-        permissions: permissionType,
-        flowRateAllowance: flowRateAllowance
-        // userData?: string
-      });
-
-      console.log("Updating your flow permissions...");
-
-      const result = await updateFlowOperatorOperation.exec(signer);
-      console.log(result);
-
-      console.log(
-        `
-    Super Token: DAIx
-    Operator: ${operator}
-    Permission Type: ${permissionType},
-    Flow Rate Allowance: ${flowRateAllowance}
-    `
-      );
-    } catch (error) {
-      console.log(
-        "Hmmm, your transaction threw an error. Make sure that this stream does not already exist, and that you've entered a valid Ethereum address!"
-      );
-      console.error(error);
-    }
-  }
 
   // User functions
   const [userType, setUserType] = useState();
@@ -250,53 +194,7 @@ function App() {
     }
   }
 
-  const getMyId = async () => {
-    try {
-      let result = await camoParcelInstance.methods.getMyId().call({ from: window.web3.currentProvider.selectedAddress });
-      console.info("result: ", result);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  const getShipperById = async (pId) => {
-    try {
-      let result = await camoParcelInstance.methods.getShipperById(pId).call({ from: window.web3.currentProvider.selectedAddress });
-      console.info("result: ", result);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   // Shipper Functions
-  const registerAsShipper = async () => {
-    try {
-      await updateFlowPermissions(addrParcel, "1000000000000000", "7");
-      let result = await camoParcelInstance.methods.registerAsShipper().send({ from: window.web3.currentProvider.selectedAddress });
-      console.info("result: ", result);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  const unregisterAsShipper = async () => {
-    try {
-      let result = await camoParcelInstance.methods.unregisterAsShipper().send({ from: window.web3.currentProvider.selectedAddress });
-      console.info("result: ", result);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  const addPartner = async (partner_address, salary) => {
-    try {
-      let result = await camoParcelInstance.methods.addPartner(partner_address, salary).send({ from: window.web3.currentProvider.selectedAddress });
-      console.info("result: ", result);
-      // TODO show toast that partner has been added
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
   const removePartner = async (partner_Id) => {
     try {
@@ -344,15 +242,7 @@ function App() {
     }
   }
 
-  const shipperDepositFund = async (amount) => {
-    try {
-      let result = await camoParcelInstance.methods.shipperDepositFund(amount).send({ from: window.web3.currentProvider.selectedAddress });
-      console.info("result: ", result);
-      // TODO show toast fund has been deposited
-    } catch (error) {
-      console.error(error);
-    }
-  }
+
 
   // Partner functions
   const updateLocation = async (pId, location) => {
@@ -400,13 +290,15 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
 
-        <Route path="/shipper" element={<Create myType={userType} registerAsShipper={registerAsShipper} unregisterAsShipper={unregisterAsShipper} shipOrder={shipOrder} />} />
+        <Route path="/shipper" element={<Shipper camoParcelInstance={camoParcelInstance} userType={userType} />} />
+
+        <Route path="/shipper/create" element={<Create myType={userType} shipOrder={shipOrder} />} />
 
         <Route path="/partner" element={<Scan myType={userType} markParcelDelivered={markParcelDelivered} updateLocation={updateLocation} />} />
 
         <Route path="/myparcels" element={<List connectedAddress={walletAddress} myType={userType} myParcels={viewMYParcels} />} />
 
-        <Route path="/owner" element={<Owner walletAddress={walletAddress} myType={userType} addShipper={addShipper} addPartner={addPartner} removeAssociate={removePartner} fundContract={shipperDepositFund} withdrawFunds={withdrawFundsCollected} />} />
+        <Route path="/owner" element={<Owner walletAddress={walletAddress} myType={userType} banShipper={banShipper} removeAssociate={removePartner} withdrawFunds={withdrawFundsCollected} />} />
       </Routes>
     </Router>
   );
