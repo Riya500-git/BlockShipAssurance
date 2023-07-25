@@ -146,6 +146,25 @@ const addPartner = async (camoParcelInstance, partner_address, salary) => {
 const shipperDepositFund = async (camoParcelInstance, amount) => {
 	try {
 		// TODO approve
+		const provider = new ethers.providers.Web3Provider(window.ethereum);
+		await provider.send("eth_requestAccounts", []);
+
+		const signer = provider.getSigner();
+
+		const chainId = await window.ethereum.request({ method: "eth_chainId" });
+		const sf = await Framework.create({
+			chainId: Number(chainId),
+			provider: provider
+		});
+
+		const superSigner = sf.createSigner({ signer: signer });
+
+		console.log(signer);
+		console.log(await superSigner.getAddress());
+		const daix = await sf.loadSuperToken("MATICx");
+
+		await daix.approve({ receiver: addrParcel, amount: amount }).exec(signer);
+
 		let result = await camoParcelInstance.methods.shipperDepositFund(amount).send({ from: window.web3.currentProvider.selectedAddress });
 		console.info("result: ", result);
 	} catch (error) {
