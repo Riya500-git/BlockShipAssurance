@@ -50,6 +50,7 @@ const Create = ({ connectedAddress, myType, registerAsShipper, unregisterAsShipp
 
   const unregister = () => {
     console.info("unregisterAsShipper() called");
+    unregisterAsShipper();
   }
 
   return (
@@ -152,8 +153,8 @@ const Create = ({ connectedAddress, myType, registerAsShipper, unregisterAsShipp
                   Create Request
                 </Button>
 
-                <Button onClick={unregister}>Unregister As Shipper</Button>
-              </form>
+                </form>
+                <Button onClick={unregister} alignSelf="flex-end" marginTop="10px">Unregister As Shipper</Button>
             </Box>
           </Box>
         }
