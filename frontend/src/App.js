@@ -12,7 +12,7 @@ import PartnersList from './PartnersList';
 
 import Web3 from 'web3';
 
-import { addrParcel, CHAIN_PARAMS, UserType } from './utils';
+import { addrParcel, CHAIN_PARAMS, generateQRCode, UserType } from './utils';
 
 
 function App() {
@@ -112,6 +112,7 @@ function App() {
       const receiver = event.returnValues[1];
       const parcelId = event.returnValues[2].toString();
       console.log(sender, receiver, parcelId);
+      let qr_data = generateQRCode(parcelId);
       // TODO make toast for sender and receiver
     })
 
@@ -247,7 +248,7 @@ function App() {
     // <Shipper/>
 
     <Router>
-      <Navbar />
+      <Navbar myType={userType} connectedAddress={walletAddress} />
       <Routes>
         <Route path="/" element={<Home />} />
 

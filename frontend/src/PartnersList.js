@@ -48,7 +48,9 @@ const PartnersList = ({ camoParcelInstance }) => {
 									>
 										{partner.active ? 'Active' : 'Inactive'}
 									</Box>
-									<CloseButton onClick={() => removePartner_(partner.walletAddress)} size="sm" alignSelf="flex-end" />
+									{
+										partner.active && <CloseButton onClick={() => removePartner_(partner.walletAddress)} size="sm" alignSelf="flex-end" />
+									}
 								</VStack>
 							</Box>
 						</Box>

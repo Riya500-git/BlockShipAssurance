@@ -64,8 +64,17 @@ const List = ({ camoParcelInstance, myType }) => {
             </h2>
             <p margin="8px 0">Name: {parcel.itemName}</p>
             <p margin="8px 0">Description: {parcel.itemDesc}</p>
-            <p margin="8px 0">Current Location:{parcel.currentLocation}</p>
-            <p margin="8px 0">Status:{getStatusString(parcel.status.toString())}</p>
+            <p margin="8px 0">Current Location: {parcel.currentLocation}</p>
+            <p margin="8px 0">Status: {getStatusString(parcel.status.toString())}</p>
+            {
+              myType === UserType.SHIPPER &&
+              <p margin="8px 0">Receiver: {parcel.receiver}</p>
+            }
+            {
+              myType !== UserType.SHIPPER &&
+              <p margin="8px 0">Sender: {parcel.sender}</p>
+
+            }
             <p margin="8px 0">
               Expected Delivery Date:{new Date(parcel.expectedDelivery.toString() * 1000).toLocaleString()}
             </p>

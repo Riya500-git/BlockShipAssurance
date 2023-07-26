@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Flex, Button, Text } from "@chakra-ui/react";
 import { FaWallet } from "react-icons/fa";
 import { Link } from 'react-router-dom';
+import { UserType } from "../utils";
 // import { TYPE_SHIPPER, TYPE_PARTNER, TYPE_OWNER, DEFAULT_USER_TYPE } from "../utils";
 
 const Navbar = ({ myType, connectedAddress }) => {
@@ -23,7 +24,7 @@ const Navbar = ({ myType, connectedAddress }) => {
     >
       <Box>
         <Text as="span" fontSize="md" fontWeight="bold">
-          DelieverEase
+          DeliverEase
         </Text>
       </Box>
 
@@ -31,8 +32,8 @@ const Navbar = ({ myType, connectedAddress }) => {
         <FaWallet size={24} />
         <Text fontSize="md" fontWeight="bold" ml={4} cursor="default">
           {connectedAddress
-            ? `${connectedAddress.slice(0, 6)}...${connectedAddress.slice(-4)}`
-            : "Connect Wallet"}
+            ? ` ${connectedAddress.slice(0, 6)}...${connectedAddress.slice(-4)}`
+            : " Connect Wallet"}
         </Text>
       </Flex>
 
@@ -52,7 +53,8 @@ const Navbar = ({ myType, connectedAddress }) => {
           </Button>
         </Link>
 
-        {/* {(myType === DEFAULT_USER_TYPE || myType === TYPE_SHIPPER) && ( */}
+        {
+          (myType === UserType.SHIPPER || myType === UserType.NONE) &&
           <Link to="/shipper">
             <Button
               as="a"
@@ -67,9 +69,11 @@ const Navbar = ({ myType, connectedAddress }) => {
               Shipper
             </Button>
           </Link>
+        }
         {/* )} */}
 
-        {/* {(myType === DEFAULT_USER_TYPE || myType === TYPE_PARTNER) && ( */}
+        {
+          myType === UserType.PARTNER &&
           <Link to="/partner">
             <Button
               as="a"
@@ -85,9 +89,10 @@ const Navbar = ({ myType, connectedAddress }) => {
               Partner
             </Button>
           </Link>
-        {/* )} */}
+        }
 
-        {/* {myType === DEFAULT_USER_TYPE && ( */}
+        {
+          (myType === UserType.SHIPPER || myType === UserType.NONE) &&
           <Link to="/myparcels">
             <Button
               as="a"
@@ -103,9 +108,10 @@ const Navbar = ({ myType, connectedAddress }) => {
               MyParcels
             </Button>
           </Link>
-        {/* )} */}
+        }
 
-        {/* {myType === TYPE_OWNER && ( */}
+        {
+          myType === UserType.OWNER &&
           <Link to="/owner">
             <Button
               as="a"
@@ -121,7 +127,7 @@ const Navbar = ({ myType, connectedAddress }) => {
               Contract
             </Button>
           </Link>
-        {/* )} */}
+        }
       </Flex>
     </Flex>
   );
