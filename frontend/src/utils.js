@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { Framework } from "@superfluid-finance/sdk-core";
 
 
-const addrParcel = "0x00334420c3B43F9E0BAaC3C1CfeCf041d0d4d9c1"
+const addrParcel = "0x36012A1eF720430CdEe297a4b7Ad4c189A185FCb"
 // "0x19521de75582E91BF9aaD0DB7Bd2296ca5A2b00d"
 const UserType = Object.freeze({
 	SHIPPER: 1,
@@ -171,5 +171,23 @@ const shipperDepositFund = async (camoParcelInstance, amount) => {
 		console.error(error);
 	}
 }
+const viewMyPartners = async (camoParcelInstance) => {
+	try {
+		let result = await camoParcelInstance.methods.viewMyPartners().call({ from: window.web3.currentProvider.selectedAddress });
+		console.info("result: ", result);
+		return result;
+	} catch (error) {
+		console.error(error);
+	}
+}
 
-export { addrParcel, CHAIN_PARAMS, UserType, ShipperType, DEBUG, TESTING_USER_TYPE, generateQRCode, getMyId, getShipperById, registerAsShipper, unregisterAsShipper, addPartner, shipperDepositFund }
+const removePartner = async (camoParcelInstance, partner_Id) => {
+	try {
+		let result = await camoParcelInstance.methods.removePartner(partner_Id).send({ from: window.web3.currentProvider.selectedAddress });
+		console.info("result: ", result);
+		// Show toast partner has been removed
+	} catch (error) {
+		console.error(error);
+	}
+}
+export { addrParcel, CHAIN_PARAMS, UserType, ShipperType, DEBUG, TESTING_USER_TYPE, generateQRCode, getMyId, getShipperById, registerAsShipper, unregisterAsShipper, addPartner, shipperDepositFund, viewMyPartners, removePartner }

@@ -148,7 +148,9 @@ contract CamoSuperParcel{
         partnerId = partnerId +1;
     }
 
-    function removePartner(uint partner_Id) external onlyActiveShipper{
+    function removePartner(address partner_addr) external onlyActiveShipper{
+        uint partner_Id = partnerIdByAddress[partner_addr];
+        require(partnerId !=0, "26");
         require(partnerById[partner_Id].associatedShipper == msg.sender, "8" );
         require(partnerById[partner_Id].active, "9");
         token.deleteFlow(msg.sender, partnerById[partner_Id].walletAddress);
@@ -225,11 +227,21 @@ contract CamoSuperParcel{
     }
 
     function viewMyParcels() external view returns (Parcel[] memory) {
-        Parcel[] memory myParcels = new Parcel[](userParcels[msg.sender].length);
-        for(uint i=0;i< userParcels[msg.sender].length;i++){
-            myParcels[i] = parcels[userParcels[msg.sender][i]];
+        if(shipperIdByAddress[msg.sender]!=0){
+            Parcel[] memory myParcels = new Parcel[](shipperById[shipperIdByAddress[msg.sender]].shippedParcels.length);
+            for(uint i=0;i< shipperById[shipperIdByAddress[msg.sender]].shippedParcels.length;i++){
+                myParcels[i] = parcels[shipperById[shipperIdByAddress[msg.sender]].shippedParcels[i]];
+            }
+            return myParcels;
         }
-        return myParcels;
+        else{
+            Parcel[] memory myParcels = new Parcel[]
+            (userParcels[msg.sender].length);
+            for(uint i=0;i< userParcels[msg.sender].length;i++){
+                myParcels[i] = parcels[userParcels[msg.sender][i]];
+            }
+            return myParcels;
+        }
     }
 
     function viewParcel(uint pId) external view onlyActiveShipper returns(Parcel memory){
@@ -238,11 +250,7 @@ contract CamoSuperParcel{
     }
 
     function viewMyShippedParcels() external view onlyActiveShipper returns(Parcel[] memory){
-        Parcel[] memory myParcels = new Parcel[](shipperById[shipperIdByAddress[msg.sender]].shippedParcels.length);
-        for(uint i=0;i< shipperById[shipperIdByAddress[msg.sender]].shippedParcels.length;i++){
-            myParcels[i] = parcels[shipperById[shipperIdByAddress[msg.sender]].shippedParcels[i]];
-        }
-        return myParcels;    
+            
     }
 
     function viewMyPartners() external view onlyActiveShipper returns(Partner[] memory){

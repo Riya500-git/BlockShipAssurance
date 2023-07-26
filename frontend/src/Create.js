@@ -129,7 +129,7 @@ const Create = ({ connectedAddress, myType, registerAsShipper, unregisterAsShipp
                   id="compensationAmount"
                   className="name-input"
                   placeholder="Compensation Price in cUSD"
-                  onChange={(event) => setBaseConpensation(event.target.value.toString() + "000000000000000000")}
+                  onChange={(event) => setBaseConpensation(event.target.value.toString())}
                 />
               </Box>
               <Button

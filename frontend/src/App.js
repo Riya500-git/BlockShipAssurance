@@ -8,7 +8,7 @@ import Navbar from './components/Navbar';
 import Home from './Home';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Shipper from './Shipper';
-
+import PartnersList from './PartnersList';
 
 import Web3 from 'web3';
 
@@ -195,17 +195,6 @@ function App() {
   }
 
   // Shipper Functions
-
-  const removePartner = async (partner_Id) => {
-    try {
-      let result = await camoParcelInstance.methods.removePartner(partner_Id).send({ from: window.web3.currentProvider.selectedAddress });
-      console.info("result: ", result);
-      // Show toast partner has been removed
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   const shipOrder = async (itemName, itemDesc, userAddress, expectedDelivery, baseCompensation, otp) => {
     try {
       let result = await camoParcelInstance.methods.shipOrder(itemName, itemDesc, userAddress, expectedDelivery, baseCompensation, otp).send({ from: window.web3.currentProvider.selectedAddress });
@@ -232,17 +221,6 @@ function App() {
       console.error(error);
     }
   }
-
-  const viewMyPartners = async () => {
-    try {
-      let result = await camoParcelInstance.methods.viewMyPartners().call({ from: window.web3.currentProvider.selectedAddress });
-      console.info("result: ", result);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-
 
   // Partner functions
   const updateLocation = async (pId, location) => {
@@ -294,11 +272,14 @@ function App() {
 
         <Route path="/shipper/create" element={<Create myType={userType} shipOrder={shipOrder} />} />
 
+
+        <Route path="/shipper/partners" element={<PartnersList camoParcelInstance={camoParcelInstance} />} />
+
         <Route path="/partner" element={<Scan myType={userType} markParcelDelivered={markParcelDelivered} updateLocation={updateLocation} />} />
 
         <Route path="/myparcels" element={<List connectedAddress={walletAddress} myType={userType} myParcels={viewMYParcels} />} />
 
-        <Route path="/owner" element={<Owner walletAddress={walletAddress} myType={userType} banShipper={banShipper} removeAssociate={removePartner} withdrawFunds={withdrawFundsCollected} />} />
+        <Route path="/owner" element={<Owner walletAddress={walletAddress} myType={userType} banShipper={banShipper} withdrawFunds={withdrawFundsCollected} />} />
       </Routes>
     </Router>
   );
