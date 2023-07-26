@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Input } from '@chakra-ui/react';
-
+import { Box, Button, Input, VStack, Stack, CloseButton, ChakraProvider } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { getMyId, getShipperById, ShipperType, UserType, registerAsShipper, unregisterAsShipper, addPartner, shipperDepositFund } from './utils';
 const Shipper = ({ camoParcelInstance, userType }) => {
@@ -42,8 +41,11 @@ const Shipper = ({ camoParcelInstance, userType }) => {
   const deposit = async () => {
     shipperDepositFund(camoParcelInstance, insuranceDeposit);
   }
-  return (
 
+    const [status, setStatus] = useState(''); 
+  
+  return (
+    <ChakraProvider>
     <Box display="flex" height="100vh" backgroundColor="rgba(25, 255, 255, 0.5)">
       <Box flex="1" display="flex" flexDirection="column" justifyContent="center" alignItems="center" padding="0">
         <Box display="flex" flexDirection="column" alignItems="center" gap="30px">
@@ -67,7 +69,7 @@ const Shipper = ({ camoParcelInstance, userType }) => {
               color="#fff"
               background="linear-gradient(90.69deg, #2472ff -22.6%, #7e51db 86.31%)"
               cursor="pointer"
-              width="200px"
+              width="240px"
               height="40px"
               fontSize="15px"
               onClick={register}
@@ -163,11 +165,8 @@ const Shipper = ({ camoParcelInstance, userType }) => {
           >
             Deposit Insurance
           </Button>
-
-
-
-
           {/* <Button
+>>>>>>> 47e50a2419c7cbfe67f9c1c02808bf386f3e4afc
           padding="50px 100px"
           borderRadius="10px"
           color="#fff"
@@ -179,9 +178,38 @@ const Shipper = ({ camoParcelInstance, userType }) => {
         >
           Remove Partner
         </Button> */}
-        </Box>
+          </Box>
       }
+
+        <Box p={4}>
+        <Box fontSize="xl" fontWeight="bold" mb={4}>
+          Add partner
+        </Box>
+        <Input placeholder="Enter partner name" mb={4} />
+        <Box bg="white" p={4} shadow="md" borderRadius="md" borderWidth="1px">
+      <VStack spacing={4} alignItems="flex-start">
+        <Stack direction="row" alignItems="center">
+          <Box fontSize="15px">Address:</Box>
+          <Input placeholder="Enter address" />
+        </Stack>
+        <Stack direction="row" alignItems="center">
+          <Box fontSize="15px">Salary:</Box>
+          <Input placeholder="Enter salary" />
+        </Stack>
+        <Button
+          size="sm"
+          borderRadius="full"
+          bg={status === 'green' ? 'green.500' : 'red.500'}
+          onClick={() => setStatus((prevStatus) => (prevStatus === 'green' ? 'red' : 'green'))}
+        >
+          {status === 'green' ? 'Active' : 'Inactive'}
+        </Button>
+        <CloseButton size="sm" alignSelf="flex-end" />
+      </VStack>
     </Box>
+    </Box>
+    </Box>
+    </ChakraProvider>
   );
 };
 
