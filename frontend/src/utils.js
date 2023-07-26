@@ -12,6 +12,12 @@ const UserType = Object.freeze({
 	NONE: 3
 });
 
+const ParcelStatus = Object.freeze({
+	Dispatched: "1",
+	InTransit: "2",
+	Delivered: "3",
+})
+
 
 const ShipperType = Object.freeze({
 	ACTIVE: "1",
@@ -190,4 +196,24 @@ const removePartner = async (camoParcelInstance, partner_Id) => {
 		console.error(error);
 	}
 }
-export { addrParcel, CHAIN_PARAMS, UserType, ShipperType, DEBUG, TESTING_USER_TYPE, generateQRCode, getMyId, getShipperById, registerAsShipper, unregisterAsShipper, addPartner, shipperDepositFund, viewMyPartners, removePartner }
+
+const viewMyParcels = async (camoParcelInstance) => {
+	try {
+		let result = await camoParcelInstance.methods.viewMyParcels().call({ from: window.web3.currentProvider.selectedAddress });
+		console.info("result: ", result);
+		return result;
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+
+const rateDeliveredParcel = async (camoParcelInstance, pId, stars) => {
+	try {
+		let result = await camoParcelInstance.methods.rateDeliveredParcel(pId, stars).send({ from: window.web3.currentProvider.selectedAddress });
+		console.info("result: ", result);
+	} catch (error) {
+		console.error(error);
+	}
+}
+export { addrParcel, CHAIN_PARAMS, UserType, ShipperType, DEBUG, TESTING_USER_TYPE, generateQRCode, getMyId, getShipperById, registerAsShipper, unregisterAsShipper, addPartner, shipperDepositFund, viewMyPartners, removePartner, viewMyParcels, rateDeliveredParcel, ParcelStatus }

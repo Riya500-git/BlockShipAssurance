@@ -128,7 +128,7 @@ const Create = ({ connectedAddress, myType, registerAsShipper, unregisterAsShipp
                   type="text"
                   id="compensationAmount"
                   className="name-input"
-                  placeholder="Compensation Price in cUSD"
+                  placeholder="Compensation Price in wei"
                   onChange={(event) => setBaseConpensation(event.target.value.toString())}
                 />
               </Box>

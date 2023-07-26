@@ -176,23 +176,6 @@ function App() {
     }
   };
 
-  const rateDeliveredParcel = async (pId, stars) => {
-    try {
-      let result = await camoParcelInstance.methods.rateDeliveredParcel(pId, stars).send({ from: window.web3.currentProvider.selectedAddress });
-      console.info("result: ", result);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  const viewMYParcels = async () => {
-    try {
-      let result = await camoParcelInstance.methods.viewMYParcels().call({ from: window.web3.currentProvider.selectedAddress });
-      console.info("result: ", result);
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
   // Shipper Functions
   const shipOrder = async (itemName, itemDesc, userAddress, expectedDelivery, baseCompensation, otp) => {
@@ -277,7 +260,7 @@ function App() {
 
         <Route path="/partner" element={<Scan myType={userType} markParcelDelivered={markParcelDelivered} updateLocation={updateLocation} />} />
 
-        <Route path="/myparcels" element={<List connectedAddress={walletAddress} myType={userType} myParcels={viewMYParcels} />} />
+        <Route path="/myparcels" element={<List camoParcelInstance={camoParcelInstance} myType={userType} />} />
 
         <Route path="/owner" element={<Owner walletAddress={walletAddress} myType={userType} banShipper={banShipper} withdrawFunds={withdrawFundsCollected} />} />
       </Routes>
