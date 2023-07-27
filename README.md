@@ -13,3 +13,5 @@ We built this project using the Celo blockchain. The smart contract was develope
 The project has immense potential for expansion and improvement. In the future, we aim to integrate more features to enhance the overall experience and efficiency of the logistics system. Some potential enhancements include real-time GPS tracking of parcels, integration with external logistics providers for wider coverage, and leveraging AI and machine learning algorithms to optimize route planning and delivery predictions. Additionally, we plan to further enhance the smart contract's capabilities, enabling more complex interactions between shippers, partners, and receivers while maintaining the utmost security and transparency. The goal is to create a truly decentralized, robust, and efficient logistics ecosystem that benefits all stakeholders involved.
 
 [Business Plan for BlockShipAssurance](https://docs.google.com/document/d/1rbYbOVYTe-_fTJv3fmkyJJWMaVQSP-yfcjUSkPBR0yg/)
+
+[User Flow](user_flow.png)
