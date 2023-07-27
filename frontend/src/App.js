@@ -1,5 +1,6 @@
 import './App.css';
 import React, { useState, useEffect } from 'react';
+import { useToast } from '@chakra-ui/react';
 import Scan from './Scan';
 import Owner from './Owner';
 import List from './List';
@@ -21,6 +22,7 @@ function App() {
   const [walletAddress, setWalletAddress] = useState('_');
   const [web3, setWeb3] = useState(null);
   const [camoParcelInstance, setCamoParcelInstance] = useState(null);
+  const toast = useToast();
 
   const [loading, setLoading] = useState(false);
   useEffect(() => {
@@ -114,6 +116,13 @@ function App() {
       console.log(sender, receiver, parcelId);
       let qr_data = generateQRCode(parcelId);
       // TODO make toast for sender and receiver
+      toast({
+        title: 'Parcel Shipped',
+        description: `Parcel ID: ${parcelId} has been shipped.`,
+        status: 'success', 
+        duration: 5000, 
+        isClosable: true, 
+      });
     })
 
     camoParcelInstance.events.ParcelLocationUpdated({}, (error, event) => {
@@ -130,6 +139,13 @@ function App() {
 
       console.log(partner, receiver, parcelId);
       // TODO make toast for partner and receiver
+      toast({
+        title: 'Parcel Location Updated',
+        description: `Parcel ID: ${parcelId} location has been updated.`,
+        status: 'info', 
+        duration: 5000,
+        isClosable: true,
+      });
     })
 
     camoParcelInstance.events.ParcelDelivered({}, (error, event) => {
@@ -144,6 +160,13 @@ function App() {
       const parcelId = event.returnValues[2].toString();
       console.log(partner, receiver, parcelId);
       // TODO make toast for partner and receiver
+      toast({
+        title: 'Parcel Delivered',
+        description: `Parcel ID: ${parcelId} has been delivered.`,
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
     })
   }
   const processedEvents = new Set();
@@ -245,8 +268,6 @@ function App() {
   }
 
   return (
-    // <Shipper/>
-
     <Router>
       <Navbar myType={userType} connectedAddress={walletAddress} />
       <Routes>
@@ -255,7 +276,6 @@ function App() {
         <Route path="/shipper" element={<Shipper camoParcelInstance={camoParcelInstance} userType={userType} />} />
 
         <Route path="/shipper/create" element={<Create myType={userType} shipOrder={shipOrder} />} />
-
 
         <Route path="/shipper/partners" element={<PartnersList camoParcelInstance={camoParcelInstance} />} />
 
