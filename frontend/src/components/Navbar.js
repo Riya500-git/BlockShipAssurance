@@ -24,7 +24,7 @@ const Navbar = ({ myType, connectedAddress }) => {
     >
       <Box>
         <Text as="span" fontSize="md" fontWeight="bold">
-          DeliverEase
+          BlockShipAssurance
         </Text>
       </Box>
 
