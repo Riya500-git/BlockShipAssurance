@@ -34,7 +34,7 @@ const List = ({ camoParcelInstance, myType }) => {
   };
 
   const submitRating = async (pId) => {
-    await rateDeliveredParcel(camoParcelInstance, selectedRating, pId);
+    await rateDeliveredParcel(camoParcelInstance, pId, selectedRating);
   }
   return (
     <ChakraProvider>
@@ -79,26 +79,38 @@ const List = ({ camoParcelInstance, myType }) => {
               Expected Delivery Date:{new Date(parcel.expectedDelivery.toString() * 1000).toLocaleString()}
             </p>
             <p margin="8px 0">OTP: {parcel.otp.toString()}</p>
-
             {
-              parcel.status === ParcelStatus.Delivered &&
+              (myType === UserType.SHIPPER || (parcel.status.toString() === ParcelStatus.Delivered && parcel.rating.toString() !== "0")) &&
               <Box display="flex" alignItems="center" marginTop="16px">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <FaStar
-                    key={star}
-                    color={star <= selectedRating ? "yellow" : "gray"}
-                    size={24}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => handleRatingChange(star)}
-                  />
-                ))}
+                {
+                  [...Array(Number(parcel.rating.toString()))].map((star) => (
+                    <FaStar
+                      key={star}
+                      color="yellow"
+                      size={24}
+                    />
+                  ))}
               </Box>
             }
 
-            {myType !== UserType.SHIPPER && parcel.status.toString() === ParcelStatus.Delivered &&
-              <Button colorScheme="teal" marginTop="16px" onClick={() => submitRating(parcel.id.toString())}>
-                Submit Rating
-              </Button>
+            {
+              myType !== UserType.SHIPPER && parcel.status.toString() === ParcelStatus.Delivered && parcel.rating.toString() === "0" &&
+              <Box>
+                <Box display="flex" alignItems="center" marginTop="16px">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <FaStar
+                      key={star}
+                      color={star <= selectedRating ? "yellow" : "gray"}
+                      size={24}
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleRatingChange(star)}
+                    />
+                  ))}
+                </Box>
+                <Button colorScheme="teal" marginTop="16px" onClick={() => submitRating(parcel.id.toString())}>
+                  Submit Rating
+                </Button>
+              </Box>
             }
           </Box>
         )
