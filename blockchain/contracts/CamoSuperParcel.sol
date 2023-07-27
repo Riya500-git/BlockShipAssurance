@@ -219,9 +219,6 @@ contract CamoSuperParcel{
         parcels[pId].rating = stars;
         Shipper storage shipper = shipperById[shipperIdByAddress[parcel.sender]];
         uint newRating = shipper.rating + (stars*10**18)/(shipper.totalRated+1);
-        // shipperById[shipperIdByAddress[parcel.sender]].totalRated = shipper.totalRated+1;
-        // shipperById[shipperIdByAddress[parcel.sender]].rating = newRating;
-        
         shipper.totalRated = shipper.totalRated+1;
         shipper.rating = newRating;
     }
@@ -247,10 +244,6 @@ contract CamoSuperParcel{
     function viewParcel(uint pId) external view onlyActiveShipper returns(Parcel memory){
         if(parcels[pId].sender != msg.sender){revert Unauthorized();}
         return parcels[pId];
-    }
-
-    function viewMyShippedParcels() external view onlyActiveShipper returns(Parcel[] memory){
-            
     }
 
     function viewMyPartners() external view onlyActiveShipper returns(Partner[] memory){

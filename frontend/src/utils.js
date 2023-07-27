@@ -3,8 +3,8 @@ import { ethers } from "ethers";
 import { Framework } from "@superfluid-finance/sdk-core";
 
 
-const addrParcel = "0x36012A1eF720430CdEe297a4b7Ad4c189A185FCb"
-// "0x19521de75582E91BF9aaD0DB7Bd2296ca5A2b00d"
+const addrParcel = "0x9005599c9CF98FAF3093d94Ed744bf3aE0C4d271"
+// "0x36012A1eF720430CdEe297a4b7Ad4c189A185FCb"
 const UserType = Object.freeze({
 	SHIPPER: 1,
 	PARTNER: 2,
@@ -33,7 +33,7 @@ const CHAIN_PARAMS = {
 	chainName: "Mumbai Testnet",
 	nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
 	rpcUrls: ["https://rpc-mumbai.maticvigil.com"],
-	blockExplorerUrls: ["https://polygonscan.com/"],
+	blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
 };
 
 

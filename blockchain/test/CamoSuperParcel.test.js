@@ -168,7 +168,7 @@ describe("CamoSuperParcel", function () {
 		expect(myPartners.length).to.equal(1);
 		expect(flow.flowRate).to.equal(partnerSalary.toString());
 
-		await camoSuperParcel.connect(account1).removePartner(partnerId);
+		await camoSuperParcel.connect(account1).removePartner(partner_address);
 
 		let partner = await camoSuperParcel.connect(account1).getMyPartnerById(partnerId);
 
@@ -184,7 +184,7 @@ describe("CamoSuperParcel", function () {
 		await camoSuperParcel.connect(account1).shipperDepositFund(5);
 		let shipper = await camoSuperParcel.connect(account1).getShipperById(1);
 		await camoSuperParcel.connect(account1).shipOrder("item1", "item desc", account3_address, getCurrentUnixTimestamp() + 60 * 60 * 48, 1, 1234);
-		let shippedParcels = await camoSuperParcel.connect(account1).viewMyShippedParcels();
+		let shippedParcels = await camoSuperParcel.connect(account1).viewMyParcels();
 		expect(shippedParcels.length).to.equal(1);
 		let parcel = shippedParcels[shippedParcels.length - 1];
 		expect(parcel.status.toNumber()).to.equal(P_STATUS_DISPATCHED);

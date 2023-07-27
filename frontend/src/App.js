@@ -7,22 +7,26 @@ import List from './List';
 import Create from './Create';
 import Navbar from './components/Navbar';
 import Home from './Home';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 import Shipper from './Shipper';
 import PartnersList from './PartnersList';
 
 import Web3 from 'web3';
-
 import { addrParcel, CHAIN_PARAMS, generateQRCode, UserType } from './utils';
 
+const eventTopicPS = "0x32c1836ded10d94133bd527768a93f4a18336e79a66c70baa8093401c9e3440f";
+const eventTopicLU = "0xa3c313d9290f28b0a583dcc5ceabc0a50c3124d1ae9ae1630668c1f404d5a6b6";
+const eventTopicPD = "0x3be6b44b0d8170026cc992b6b6eda259b98e02d16bdfe4b9dd3db223b5420cfd";
+
+const contract_url = CHAIN_PARAMS.blockExplorerUrls[0] + "address/" + addrParcel;
 
 function App() {
+  console.log(contract_url)
 
   // web3 essentials
   const [walletAddress, setWalletAddress] = useState('_');
   const [web3, setWeb3] = useState(null);
   const [camoParcelInstance, setCamoParcelInstance] = useState(null);
-  const toast = useToast();
 
   const [loading, setLoading] = useState(false);
   useEffect(() => {
@@ -75,6 +79,7 @@ function App() {
   const listenMMAccount = async () => {
     try {
       window.ethereum.on("accountsChanged", async function () {
+        sendToHome();
         window.location.reload();
       });
     } catch (error) {
@@ -93,90 +98,157 @@ function App() {
       const camoParcelInstance = new web3Instance.eth.Contract(camoParcelAbi, addrParcel);
       console.info("camoParcelInstance:- ", camoParcelInstance);
       setCamoParcelInstance(camoParcelInstance)
-      await attachListeners();
+      attachEventListeners();
     } catch (error) {
       console.error(error);
     }
   }
+  // const navigate = useNavigate();
+  const sendToHome = () => {
+    // navigate('/home');
+  }
 
-  const attachListeners = async () => {
-    console.log("attachListeners() called")
-    if (!camoParcelInstance) return;
-    camoParcelInstance.events.ParcelShippedEvent({}, (error, event) => {
-      if (error) {
-        console.error(error);
-        return;
-      }
-      if (!shouldProcessEvent(event.id)) return;
-      console.log(event);
+  const toast = useToast();
 
-      const sender = event.returnValues[0];
-      const receiver = event.returnValues[1];
-      const parcelId = event.returnValues[2].toString();
-      console.log(sender, receiver, parcelId);
-      let qr_data = generateQRCode(parcelId);
-      // TODO make toast for sender and receiver
+  let processedEventIds = [];
+
+  let shouldProcessEvent = (eventId) => {
+    console.log("shouldProcessEvent(_) called", eventId);
+
+    if (processedEventIds.includes(eventId)) {
+      return false;
+    }
+    processedEventIds.push(eventId);
+    if (processedEventIds.length === 1000) {
+      processedEventIds = [];
+    }
+    return true;
+  }
+
+
+  function processEvent(eventData, topics) {
+    const eventAbi = {
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "arg1",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "arg2",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "arg3",
+          "type": "uint256"
+        }
+      ],
+    };
+    const eventTopic = topics[0];
+
+    // Decode the data
+    const decodedData = (new Web3()).eth.abi.decodeLog(eventAbi.inputs, eventData, eventTopic);
+
+    // Access the decoded data
+    const event_updater = decodedData.arg1;
+    const receiver = decodedData.arg2;
+    const parcelId = decodedData.arg3;
+    console.log("event_updater:- ", event_updater);
+    console.log("receiver:- ", receiver);
+    console.log("parcelId:- ", parcelId);
+
+    if (eventTopic === eventTopicLU) {
+      parcelLocationUpdatedEvent(walletAddress, event_updater, receiver, parcelId);
+    } else if (eventTopic === eventTopicPD) {
+      ParcelDeliveredEvent(walletAddress, event_updater, receiver, parcelId);
+    } else if (eventTopic === eventTopicPS) {
+      parcelShippedEvent(walletAddress, event_updater, receiver, parcelId);
+    }
+  }
+
+  let attachEventListeners = () => {
+    console.log("attachEventListener() called");
+
+    const contract = camoParcelInstance;
+    if (!contract) return;
+    console.log("attached")
+    console.log(contract.events)
+
+    // ({}, (error, event) => {
+    //   console.log("------------", error, event)
+    //   if (error) {
+    //     console.error('Error listening to PlayerEntered event:', error);
+    //     return;
+    //   }
+
+    //   if (!shouldProcessEvent(event.id)) return;
+    //   console.log(event);
+    // })
+  }
+
+
+  const parcelShippedEvent = async (walletAddress, sender, receiver, parcelId) => {
+    console.log(`Parcel ${parcelId} shipped from ${sender} to ${receiver}`);
+    if (sender === walletAddress) {
+      const text = sender + " " + receiver + " " + parcelId;
+      const qr_url = await generateQRCode(text);
+      console.log("qr_url:- ", qr_url);
+
+      alert(`Your parcel with ID ${parcelId} has been shipped to ${receiver}. Click OK to view the QR Code.`);
+      // window.open(qr_url, '_blank');
+      const qrPageUrl = window.open("", "_blank");
+      qrPageUrl.document.write(`
+        <html>
+          <body>
+            <img src="${qr_url}" alt="QR Code">
+          </body>
+        </html>
+      `);
+      qrPageUrl.document.close();
+    }
+
+    else if (receiver.toLowerCase() === walletAddress.toLowerCase()) {
+      // TODO show the receiver parcel has shipped and its id
       toast({
         title: 'Parcel Shipped',
-        description: `Parcel ID: ${parcelId} has been shipped.`,
-        status: 'success', 
-        duration: 5000, 
-        isClosable: true, 
-      });
-    })
-
-    camoParcelInstance.events.ParcelLocationUpdated({}, (error, event) => {
-      if (error) {
-        console.error(error);
-        return;
-      }
-      if (!shouldProcessEvent(event.id)) return;
-      console.log(event);
-
-      const partner = event.returnValues[0];
-      const receiver = event.returnValues[1];
-      const parcelId = event.returnValues[2].toString();
-
-      console.log(partner, receiver, parcelId);
-      // TODO make toast for partner and receiver
-      toast({
-        title: 'Parcel Location Updated',
-        description: `Parcel ID: ${parcelId} location has been updated.`,
-        status: 'info', 
-        duration: 5000,
-        isClosable: true,
-      });
-    })
-
-    camoParcelInstance.events.ParcelDelivered({}, (error, event) => {
-      if (error) {
-        console.error(error);
-        return;
-      }
-      if (!shouldProcessEvent(event.id)) return;
-      console.log(event);
-      const partner = event.returnValues[0];
-      const receiver = event.returnValues[1];
-      const parcelId = event.returnValues[2].toString();
-      console.log(partner, receiver, parcelId);
-      // TODO make toast for partner and receiver
-      toast({
-        title: 'Parcel Delivered',
-        description: `Parcel ID: ${parcelId} has been delivered.`,
+        description: `You have received a parcel with ID ${parcelId} from ${sender}`,
         status: 'success',
         duration: 5000,
         isClosable: true,
       });
-    })
-  }
-  const processedEvents = new Set();
-  const shouldProcessEvent = (evenId) => {
-    if (processedEvents.has(evenId)) return false;
-    if (processedEvents.size >= 10000) processedEvents.clear()
-    processedEvents.add(evenId);
-    return true;
-  }
+    }
+  };
 
+  const parcelLocationUpdatedEvent = (walletAddress, partner, receiver, parcelId) => {
+
+    console.log(`Parcel ${parcelId} updated by ${partner}, `, walletAddress);
+    if (partner === walletAddress) toast({
+      title: 'Parcel Location Updated',
+      description: `Location for parcel with ID ${parcelId} has been updated by successfully`,
+      status: 'info',
+      duration: 5000,
+      isClosable: true,
+    });
+    else if (receiver === walletAddress) toast({
+      title: 'Parcel Location Updated',
+      description: `Location for your parcel with ID ${parcelId} has been updated by ${partner}`,
+      status: 'info',
+      duration: 5000,
+      isClosable: true,
+    });
+  };
+
+  const ParcelDeliveredEvent = (walletAddress, partner, receiver, parcelId) => {
+    if (partner === walletAddress || receiver === walletAddress) toast({
+      title: 'Parcel Delivered',
+      description: `Parcel with ID ${parcelId} has been delivered by ${partner}`,
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+    });
+  };
 
   // User functions
   const [userType, setUserType] = useState();
@@ -206,6 +278,10 @@ function App() {
     try {
       let result = await camoParcelInstance.methods.shipOrder(itemName, itemDesc, userAddress, expectedDelivery, baseCompensation, otp).send({ from: window.web3.currentProvider.selectedAddress });
       console.info("result: ", result);
+      for (var log in result.logs) {
+        console.log(result.logs[log].data);
+        processEvent(result.logs[log].data, result.logs[log].topics);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -232,8 +308,13 @@ function App() {
   // Partner functions
   const updateLocation = async (pId, location) => {
     try {
-      let result = await camoParcelInstance.methods.updateLocation(pId, location).send({ from: window.web3.currentProvider.selectedAddress });
+      console.log("pId: ", pId, "location: ", location);
+      let result = await camoParcelInstance.methods.updateLocation(Number(pId), location).send({ from: window.web3.currentProvider.selectedAddress });
       console.info("result: ", result);
+      for (var log in result.logs) {
+        console.log(result.logs[log].data);
+        processEvent(result.logs[log].data, result.logs[log].topics);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -243,6 +324,10 @@ function App() {
     try {
       let result = await camoParcelInstance.methods.markParcelDelivered(pId, otp).send({ from: window.web3.currentProvider.selectedAddress });
       console.info("result: ", result);
+      for (var log in result.logs) {
+        console.log(result.logs[log].data);
+        processEvent(result.logs[log].data, result.logs[log].topics);
+      }
     } catch (error) {
       console.error(error);
     }
