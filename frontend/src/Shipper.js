@@ -52,7 +52,7 @@ const Shipper = ({ camoParcelInstance, userType }) => {
             {
               shipper &&
               <Box>
-                <Box>Rating {shipper.rating.toString()}</Box>
+                <Box>Rating {Number(shipper.rating.toString().substring(0, 3)) / 100}</Box>
                 <Box>Rated By {shipper.totalRated.toString()}</Box>
                 <Box>Deposit Amount {shipper.insuranceDeposit.toString()}</Box>
                 <Box>Total Shipped Parcels {shipper.shippedParcels.length}
