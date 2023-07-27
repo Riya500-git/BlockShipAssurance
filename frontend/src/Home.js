@@ -3,13 +3,13 @@ import { Box, Button, Flex, Heading, Image, Text, ChakraProvider } from '@chakra
 import Typewriter from 'typewriter-effect';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { UserType } from "./utils";
 import Navbar from './components/Navbar';
 
-const Home = () => {
+const Home = (myType) => {
   return (
     <>
       <ChakraProvider>
-        {/* <Navbar/> */}
         <Box
           bgSize="cover"
           bgPosition="center"
@@ -48,7 +48,8 @@ const Home = () => {
                 </Button>
               </Link>
 
-
+              {
+              myType === UserType.PARTNER &&
               <Link to="/partner">
                 <Button
                   colorScheme="teal"
@@ -61,6 +62,7 @@ const Home = () => {
                   Scan
                 </Button>
               </Link>
+              }
 
             </Box>
 
