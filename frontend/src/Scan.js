@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Box, Button, Input, ChakraProvider } from '@chakra-ui/react';
 import Html5QrcodePlugin from './Html5QrcodePlugin.jsx';
 
-const Scan = ({ connectedAddress, myType, markParcelDelivered, updateLocation }) => {
+const Scan = ({ myType, markParcelDelivered, updateLocation }) => {
   const [parcelId, setParcelId] = useState('');
   const [otpValue, setOtpValue] = useState('');
 

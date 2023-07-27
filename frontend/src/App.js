@@ -356,7 +356,7 @@ function App() {
     <Router>
       <Navbar myType={userType} connectedAddress={walletAddress} />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home myType={userType} />} />
 
         <Route path="/shipper" element={<Shipper camoParcelInstance={camoParcelInstance} userType={userType} />} />
 
