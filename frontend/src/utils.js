@@ -3,8 +3,10 @@ import { ethers } from "ethers";
 import { Framework } from "@superfluid-finance/sdk-core";
 
 
-const addrParcel = "0x9005599c9CF98FAF3093d94Ed744bf3aE0C4d271"
-// "0x36012A1eF720430CdEe297a4b7Ad4c189A185FCb"
+const addrParcel = "0xAC81bf076EB3699039a6ea7DA81Ad828a5606938"
+const SUPER_TOKEN = "0x62B8B11039FcfE5aB0C56E502b1C372A3d2a9c7A"
+// "0x9005599c9CF98FAF3093d94Ed744bf3aE0C4d271"
+// "MATICx"
 const UserType = Object.freeze({
 	SHIPPER: 1,
 	PARTNER: 2,
@@ -29,12 +31,21 @@ const DEBUG = false;
 const TESTING_USER_TYPE = UserType.SHIPPER;
 
 const CHAIN_PARAMS = {
-	chainId: "0x13881",
-	chainName: "Mumbai Testnet",
-	nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
-	rpcUrls: ["https://rpc-mumbai.maticvigil.com"],
-	blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
+	chainId: "0xa4ec",
+	chainName: "Celo",
+	nativeCurrency: { name: "Celo", symbol: "CELO", decimals: 18 },
+	rpcUrls: ["https://forno.celo.org"],
+	blockExplorerUrls: ["https://explorer.celo.org/"],
+	iconUrls: ["future"],
 };
+
+// const CHAIN_PARAMS = {
+// 	chainId: "0x13881",
+// 	chainName: "Mumbai Testnet",
+// 	nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
+// 	rpcUrls: ["https://rpc-mumbai.maticvigil.com"],
+// 	blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
+// };
 
 
 const QRCode = require('qrcode');
@@ -97,7 +108,7 @@ async function updateFlowPermissions(
 
 	console.log(signer);
 	console.log(await superSigner.getAddress());
-	const daix = await sf.loadSuperToken("MATICx");
+	const daix = await sf.loadSuperToken(SUPER_TOKEN);
 
 	console.log(daix);
 

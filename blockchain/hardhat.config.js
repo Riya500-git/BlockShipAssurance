@@ -24,6 +24,11 @@ module.exports = {
     matic: {
       url: "https://rpc-mumbai.maticvigil.com",
       accounts: [process.env.PRIVATE_KEY]
+    },
+    celo: {
+      url: "https://forno.celo.org",
+      accounts: [process.env.PRIVATE_KEY],
+      chainId: 42220
     }
   },
   gasReporter: {
